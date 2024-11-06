@@ -1,9 +1,15 @@
 :root {
   --color-black: #000;
   --color-white: #fff;
+  --color-blue: #174B7C;
+  --color-deep-blue: #1A263D;
+  --color-light-grey: #F7F8F8;
+  --base-transition: 0.3s ease-in-out;
 }
 
 :root {
+  --color-primary: var(--color-blue);
   --color-text: var(--color-black);
+  --color-text-white: var(--color-white);
   --color-background: var(--color-white);
 }
