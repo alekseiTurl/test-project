@@ -1,11 +1,18 @@
 <template>
-  <main>
-    <div class="div">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti enim explicabo facere fugit
-      pariatur quos repudiandae veritatis voluptatibus! Autem cum dolorem facere mollitia officia
-      repellat similique ut. Doloribus, fugit suscipit!
-    </div>
+  <main class="main">
+    <ui-button text="Стать резидентом" />
   </main>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import UiButton from '@/components/common/UiButton/UiButton.vue';
+</script>
+
+<style scoped lang="scss">
+.main {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
