@@ -1,6 +1,9 @@
+import { createApp } from 'vue';
+import type { Directive } from 'vue';
+import { mask } from 'vue-the-mask';
+import App from './App.vue';
 import './assets/styles/main.scss';
 
-import { createApp } from 'vue';
-import App from './App.vue';
-
-createApp(App).mount('#app');
+createApp(App)
+  .directive('mask', mask as Directive)
+  .mount('#app');

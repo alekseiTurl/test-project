@@ -5,6 +5,8 @@
       stack-label
       label="label"
       :model-value="input"
+      type="tel"
+      v-mask="'+7 (###) ###-##-##'"
     />
   </main>
 </template>
@@ -14,7 +16,7 @@ import UiButton from '@/components/common/UiButton/UiButton.vue';
 import UiInput from '@/components/common/UiInput/UiInput.vue';
 import { ref } from 'vue';
 
-const input = ref('test');
+const input = ref(null);
 </script>
 
 <style scoped lang="scss">
