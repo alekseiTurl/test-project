@@ -9,7 +9,13 @@
       :type="props.type"
       :placeholder="props.stackLabel ? '' : props.placeholder"
     />
+
     <label v-if="props.stackLabel">{{ props.label }}</label>
+
+    <slot
+      name="icon"
+      class="ui-input__icon"
+    />
   </div>
 </template>
 
@@ -84,6 +90,10 @@ defineOptions({
       transform var(--base-transition);
   }
 
+  &__icon {
+    position: absolute;
+  }
+
   &--primary {
     input {
       border: 1px solid var(--color-light-grey);
@@ -95,5 +105,11 @@ defineOptions({
       }
     }
   }
+}
+:slotted(svg) {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
 }
 </style>

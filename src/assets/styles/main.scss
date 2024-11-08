@@ -3,6 +3,10 @@
 @import 'variables';
 @import 'mixins';
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   min-height: 100vh;
   color: var(--color-text);
