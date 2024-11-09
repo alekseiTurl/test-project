@@ -32,7 +32,7 @@ const props = withDefaults(defineProps<IUiInput>(), {
   view: 'primary',
   placeholder: 'Введите текст',
 });
-console.log(props);
+
 const inputValue = computed({
   get() {
     return props.modelValue;
