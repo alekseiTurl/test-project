@@ -7,9 +7,15 @@ export interface IUiInput {
   stackLabel?: boolean;
   label?: string;
   view: string;
+  rightText?: boolean;
+  labelStatic?: boolean;
+  range?: {
+    max: string | number;
+    min: string | number;
+  };
 }
 
-type DefaultInputType =
+export type DefaultInputType =
   | 'text'
   | 'number'
   | 'password'

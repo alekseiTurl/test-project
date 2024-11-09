@@ -25,6 +25,7 @@ const props = withDefaults(defineProps<IUiButton>(), {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: fit-content;
   padding: 12px 40px;
   border: none;
   cursor: pointer;

@@ -16,6 +16,7 @@
           name="ic:sharp-expand-more"
           width="24"
           :style="`transform: translateY(-50%) ${showOptions ? 'rotate(180deg)' : 'rotate(0)'}`"
+          @click="showOptions = !showOptions"
         />
         <ui-icon
           v-if="selectedValue"
@@ -84,11 +85,13 @@ const emits = defineEmits<{
 
   &__options {
     position: absolute;
+    width: 100%;
     max-width: 100%;
     background-color: var(--color-light-grey);
     border-radius: 6px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+    z-index: 2;
 
     li {
       padding: 15px;
