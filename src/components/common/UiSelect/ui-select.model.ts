@@ -6,7 +6,7 @@ export interface IUiSelect {
   view: string;
 }
 
-interface IUiSelectOptions {
+export interface IUiSelectOptions {
   label: string;
   value: string | number | null;
 }

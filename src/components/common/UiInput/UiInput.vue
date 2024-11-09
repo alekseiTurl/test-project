@@ -8,6 +8,8 @@
       v-model="inputValue"
       :type="props.type"
       :placeholder="props.stackLabel ? '' : props.placeholder"
+      :readonly="props.readonly"
+      :disabled="props.disable"
     />
 
     <label v-if="props.stackLabel">{{ props.label }}</label>
@@ -52,6 +54,7 @@ defineOptions({
   position: relative;
   display: flex;
   min-height: 64px;
+  min-width: 300px;
 
   & input {
     width: 100%;
@@ -61,7 +64,9 @@ defineOptions({
     border-radius: 5px;
     font-size: 18px;
 
-    transition: border-color var(--base-transition);
+    transition:
+      border-color var(--base-transition),
+      background-color var(--base-transition);
 
     &::placeholder {
       color: var(--color-blue);
@@ -111,5 +116,6 @@ defineOptions({
   top: 50%;
   right: 20px;
   transform: translateY(-50%);
+  transition: transform var(--base-transition);
 }
 </style>
