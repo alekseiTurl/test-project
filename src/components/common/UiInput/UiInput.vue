@@ -83,6 +83,10 @@ defineOptions({
   flex-direction: column;
   min-width: 300px;
 
+  @include xs-screen {
+    min-width: 100%;
+  }
+
   &__container {
     position: relative;
     display: flex;

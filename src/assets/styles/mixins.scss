@@ -5,3 +5,21 @@
     }
   }
 }
+
+@mixin md-screen {
+  @media (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin sm-screen {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin xs-screen {
+  @media (max-width: 576px) {
+    @content;
+  }
+}

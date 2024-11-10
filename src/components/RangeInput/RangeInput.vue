@@ -89,6 +89,10 @@ const updateValue = (val: string | number | null) => {
     justify-content: space-between;
     gap: 10px;
 
+    @include md-screen {
+      flex-wrap: wrap;
+    }
+
     & .ui-input {
       width: 100%;
     }

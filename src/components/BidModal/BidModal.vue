@@ -198,6 +198,11 @@ const emit = defineEmits<{
     font-size: 24px;
     font-weight: 600;
     color: var(--color-deep-blue);
+
+    @include md-screen {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
   }
 
   &__form {
@@ -228,5 +233,19 @@ const emit = defineEmits<{
   background: var(--color-background);
   max-width: 70vw;
   max-height: 90%;
+  overflow: auto;
+}
+
+@media (max-width: 1024px) {
+  .bid-modal__content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bid-modal__content {
+    max-width: 90vw;
+    max-height: 90%;
+  }
 }
 </style>
