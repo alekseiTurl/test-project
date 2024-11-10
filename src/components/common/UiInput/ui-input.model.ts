@@ -1,3 +1,5 @@
+import type { ErrorObject } from '@vuelidate/core';
+
 export interface IUiInput {
   modelValue: string | number | null;
   type: DefaultInputType;
@@ -13,6 +15,7 @@ export interface IUiInput {
     max: string | number;
     min: string | number;
   };
+  error?: ErrorObject[];
 }
 
 export type DefaultInputType =

@@ -2,7 +2,8 @@
   <div class="ui-select">
     <ui-input
       :label="props.label"
-      :model-value="inputValue"
+      v-model:model-value="inputValue"
+      :error="props.error"
       :view="props.view"
       :disable="props.disable"
       @click="showOptions = !showOptions"
@@ -19,7 +20,7 @@
           @click="showOptions = !showOptions"
         />
         <ui-icon
-          v-if="selectedValue"
+          v-if="selectedValues?.length"
           name="ic:round-close"
           width="22"
           style="right: 40px"
@@ -37,7 +38,7 @@
           v-for="(opt, index) in props.options"
           :key="index"
           @click="setSelectedValue(opt)"
-          :class="{ selected: selectedValue?.value === opt.value }"
+          :class="{ selected: selectedValues?.find((option) => option.value === opt.value) }"
         >
           {{ opt.label }}
         </li>
@@ -59,22 +60,33 @@ const props = withDefaults(defineProps<IUiSelect>(), {
 const showOptions = ref(false);
 
 const inputValue = ref<string | number | null>(null);
-const selectedValue = ref<IUiSelectOptions | null>(null);
+const selectedValues = ref<IUiSelectOptions[] | null>([]);
 
 const setSelectedValue = (opt: IUiSelectOptions) => {
-  selectedValue.value = opt;
-  inputValue.value = opt.label;
-  emits('update:modelValue', opt);
+  if (props.multiply && Array.isArray(selectedValues.value)) {
+    if (!selectedValues.value?.includes(opt)) {
+      selectedValues.value.push(opt);
+    } else {
+      selectedValues.value = selectedValues.value.filter((option) => option.value !== opt.value);
+    }
+
+    inputValue.value = selectedValues.value.map((option) => option.label).join(', ');
+  } else {
+    selectedValues.value = [opt];
+    inputValue.value = opt.label;
+  }
+
+  emits('update:modelValue', selectedValues.value);
 };
 
 const clearSelectedValue = () => {
-  selectedValue.value = null;
+  selectedValues.value = [];
   inputValue.value = null;
   emits('update:modelValue', null);
 };
 
 const emits = defineEmits<{
-  (e: 'update:modelValue', v: IUiSelectOptions | null): void;
+  (e: 'update:modelValue', v: IUiSelectOptions[] | IUiSelectOptions | null): void;
 }>();
 </script>
 
@@ -109,7 +121,7 @@ const emits = defineEmits<{
 
 :deep(.ui-input) {
   & input {
-    padding: v-bind('selectedValue?.value ? `10px 55px 10px 20px` : `10px 20px`');
+    padding: v-bind('!!selectedValues ? `10px 55px 10px 20px` : `10px 20px`');
     cursor: pointer;
     text-overflow: ellipsis;
   }

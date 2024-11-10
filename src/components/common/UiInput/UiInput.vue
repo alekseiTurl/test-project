@@ -1,31 +1,52 @@
 <template>
   <div
-    :class="[`ui-input--${props.view}`, props.labelStatic ? 'ui-input--label-static' : '']"
+    :class="[
+      `ui-input--${props.view}`,
+      props.labelStatic ? 'ui-input--label-static' : '',
+      props.error?.length ? 'ui-input--novalid' : '',
+    ]"
     class="ui-input"
   >
-    <input
-      v-bind="$attrs"
-      v-model="inputValue"
-      :type="props.type"
-      :placeholder="props.stackLabel ? '' : props.placeholder"
-      :readonly="props.readonly"
-      :disabled="props.disable"
-      :max="props.range?.max"
-      :min="props.range?.min"
-    />
+    <div class="ui-input__container">
+      <input
+        v-bind="$attrs"
+        :value="inputValue"
+        :type="props.type"
+        :placeholder="props.stackLabel ? '' : props.placeholder"
+        :readonly="props.readonly"
+        :disabled="props.disable"
+        :max="props.range?.max"
+        :min="props.range?.min"
+        @input="changeInputValue"
+      />
 
-    <label v-if="props.stackLabel">{{ props.label }}</label>
+      <label v-if="props.stackLabel">{{ props.label }}</label>
 
-    <slot
-      name="icon"
-      class="ui-input__icon"
-    />
+      <slot
+        name="icon"
+        class="ui-input__icon"
+      />
+    </div>
+
+    <transition-group
+      name="error"
+      tag="ul"
+      class="ui-input__errors"
+    >
+      <li
+        class="ui-input__errors-item"
+        v-for="error in errors"
+        :key="error.$uid"
+      >
+        {{ error.$message }}
+      </li>
+    </transition-group>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { IUiInput } from '@/components/common/UiInput/ui-input.model';
 import { computed } from 'vue';
+import type { IUiInput } from '@/components/common/UiInput/ui-input.model';
 
 const props = withDefaults(defineProps<IUiInput>(), {
   type: 'text',
@@ -33,14 +54,18 @@ const props = withDefaults(defineProps<IUiInput>(), {
   placeholder: 'Введите текст',
 });
 
-const inputValue = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(v: string | number | null) {
-    emits('update:modelValue', v);
-  },
-});
+const errors = computed(() => props.error);
+const inputValue = computed(() => props.modelValue);
+
+const changeInputValue = (e: Event) => {
+  if (props.type === 'tel') {
+    const regExp = /\D/g;
+    const value = (e.target as HTMLInputElement).value.replace(regExp, '');
+    emits('update:modelValue', value);
+  } else {
+    emits('update:modelValue', (e.target as HTMLInputElement).value);
+  }
+};
 
 const emits = defineEmits<{
   (e: 'update:modelValue', v: string | number | null): void;
@@ -55,12 +80,17 @@ defineOptions({
 .ui-input {
   position: relative;
   display: flex;
-  min-height: 64px;
+  flex-direction: column;
   min-width: 300px;
 
+  &__container {
+    position: relative;
+    display: flex;
+  }
+
   & input {
+    height: 64px;
     width: 100%;
-    min-height: 100%;
     padding: v-bind('props.rightText ? "10px 20px 10px 40px" : "10px 20px"');
     border-radius: 5px;
     font-size: 18px;
@@ -101,6 +131,20 @@ defineOptions({
     position: absolute;
   }
 
+  &__errors {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 5px;
+
+    &-item {
+      padding-left: 10px;
+      padding-right: 10px;
+      font-size: 12px;
+      color: var(--color-error);
+    }
+  }
+
   &--primary {
     input {
       border: 1px solid var(--color-light-grey);
@@ -110,6 +154,19 @@ defineOptions({
         outline: none;
         border-color: var(--color-blue);
       }
+    }
+  }
+
+  &--novalid {
+    input {
+      border-color: var(--color-error);
+
+      &:focus {
+        border-color: var(--color-error);
+      }
+    }
+    label {
+      color: var(--color-error);
     }
   }
 
@@ -138,5 +195,15 @@ defineOptions({
   right: 20px;
   transform: translateY(-50%);
   transition: transform var(--base-transition);
+}
+
+.error-enter-active,
+.error-leave-active {
+  transition: opacity var(--base-transition);
+}
+
+.error-enter-from,
+.error-leave-to {
+  opacity: 0;
 }
 </style>

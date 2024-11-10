@@ -7,15 +7,21 @@
   >
     <div class="bid-modal__title">Заполните заявку, чтобы стать резидентом</div>
 
-    <form class="bid-modal__form">
+    <form
+      @submit.prevent="onSubmit"
+      class="bid-modal__form"
+    >
       <ui-input
-        :model-value="formData.name"
+        v-model:model-value="v.name.$model"
+        :error="v.name.$errors"
         label="Наименование организации / ИП"
+        name="name_organization"
         stack-label
       />
 
       <ui-input
-        :model-value="formData.phone"
+        v-model:model-value="v.phone.$model"
+        :error="v.phone.$errors"
         label="Контактный телефон"
         stack-label
         type="tel"
@@ -24,46 +30,53 @@
 
       <ui-select
         :options="typeOfRoomOptions"
-        :model-value="formData.type_of_room"
+        v-model:model-value="v.type_of_room.$model"
+        :error="v.type_of_room.$errors"
+        multiply
         label="Тип помещения"
       />
 
       <ui-input
-        :model-value="formData.address"
+        v-model:model-value="v.address.$model"
+        :error="v.address.$errors"
         label="Адрес"
         stack-label
       />
 
       <range-input
         title-text="Площадь помещения (м2)"
-        :model-value="formData.area"
-        :range="{ max: 100, min: 1 }"
+        :model-value="v.area.$model"
+        :error="v.area.$errors"
+        :range="areaRange"
       />
 
       <range-input
         title-text="Дата начала аренды"
-        :model-value="formData.date"
-        :range="{ max: '2026-01-01', min: '2024-01-01' }"
+        :model-value="v.date.$model"
+        :error="v.date.$errors"
+        :range="dateRange"
         type="date"
       />
 
       <ui-button
+        type="submit"
         text="Отправить"
-        @click="emit('confirm')"
       />
     </form>
   </VueFinalModal>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { VueFinalModal } from 'vue-final-modal';
 import UiInput from '@/components/common/UiInput/UiInput.vue';
 import UiSelect from '@/components/common/UiSelect/UiSelect.vue';
 import UiButton from '@/components/common/UiButton/UiButton.vue';
+import RangeInput from '@/components/RangeInput/RangeInput.vue';
+import { useVuelidate } from '@vuelidate/core';
+import { required, helpers, minLength, minValue, maxValue, between } from '@vuelidate/validators';
 import type { IBidData } from '@/components/BidModal/bid-modal.model';
 import type { IUiSelectOptions } from '@/components/common/UiSelect/ui-select.model';
-import RangeInput from '@/components/RangeInput/RangeInput.vue';
 
 const formData = ref<IBidData>({
   name: null,
@@ -94,6 +107,77 @@ const typeOfRoomOptions: IUiSelectOptions[] = [
     value: 'тип 3',
   },
 ];
+
+const areaRange = { max: 100, min: 1 };
+const dateRange = { max: '2026-01-01', min: '2024-01-01' };
+
+const rules = computed(() => ({
+  name: {
+    required: helpers.withMessage('Обязательное поле', required),
+  },
+  phone: {
+    required: helpers.withMessage('Обязательное поле', required),
+    minLength: helpers.withMessage('Не верный формат', minLength(11)),
+  },
+  address: {
+    required: helpers.withMessage('Обязательное поле', required),
+  },
+  type_of_room: {
+    required: helpers.withMessage('Обязательное поле', required),
+  },
+  area: {
+    from: {
+      required: helpers.withMessage('Введите начальное значение', required),
+      range: helpers.withMessage(
+        `Значение должно быть от ${areaRange.min} до ${areaRange.max}`,
+        between(areaRange.min, areaRange.max),
+      ),
+      maxValue: helpers.withMessage(
+        'Не верное значение',
+        maxValue(formData.value.area.to ?? areaRange.max),
+      ),
+    },
+    to: {
+      required: helpers.withMessage('Введите конечное значение', required),
+      range: helpers.withMessage(
+        `Значение должно быть от ${areaRange.min} до ${areaRange.max}`,
+        between(areaRange.min, areaRange.max),
+      ),
+      minValue: helpers.withMessage(
+        'Не верное значение',
+        minValue(formData.value.area.from ?? areaRange.min),
+      ),
+    },
+  },
+  date: {
+    from: {
+      required: helpers.withMessage('Введите начальную дату', required),
+      minDate: helpers.withMessage(
+        'Не верная дата',
+        maxValue(formData.value.date.to ?? dateRange.max),
+      ),
+    },
+    to: {
+      required: helpers.withMessage('Введите конечную дату', required),
+      maxDate: helpers.withMessage(
+        'Не верная дата',
+        minValue(formData.value.date.from ?? dateRange.max),
+      ),
+    },
+  },
+}));
+
+const v = useVuelidate(rules, formData);
+
+const onSubmit = () => {
+  v.value.$validate();
+  let isValid = !v.value.$invalid;
+
+  if (isValid) {
+    console.log(formData.value);
+    emit('confirm');
+  }
+};
 
 const emit = defineEmits<{
   (e: 'confirm'): void;
@@ -133,10 +217,10 @@ const emit = defineEmits<{
   justify-content: center;
   align-items: center;
 }
+
 .bid-modal__content {
   display: flex;
   flex-direction: column;
-  align-items: center;
   padding: 40px;
   background: var(--color-background);
   max-width: 70vw;

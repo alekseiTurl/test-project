@@ -5,6 +5,7 @@
   --color-light-blue: rgba(0, 96, 239, 0.23);
   --color-deep-blue: #1A263D;
   --color-light-grey: #F7F8F8;
+  --color-red: #ff0000;
   --base-transition: 0.3s ease-in-out;
 }
 
@@ -13,4 +14,5 @@
   --color-text: var(--color-black);
   --color-text-white: var(--color-white);
   --color-background: var(--color-white);
+  --color-error: var(--color-red);
 }

@@ -4,22 +4,26 @@
 
     <div class="range-input__row">
       <ui-input
-        :model-value="modelValue.from"
+        v-model:model-value="fromValue"
+        :error="errorFrom"
         :type="props.type"
         :view="props.view"
         :label="resolvedLabels.from"
         :range="props.range"
+        @update:model-value="modelValue.from = updateValue($event)"
         right-text
         stack-label
         label-static
       />
 
       <ui-input
-        :model-value="modelValue.to"
+        v-model:model-value="toValue"
+        :error="errorTo"
         :type="props.type"
         :view="props.view"
         :label="resolvedLabels.to"
         :range="props.range"
+        @update:model-value="modelValue.to = updateValue($event)"
         right-text
         stack-label
         label-static
@@ -30,7 +34,7 @@
 
 <script setup lang="ts">
 import UiInput from '@/components/common/UiInput/UiInput.vue';
-import type { IRangeInput, IRangeInputValue } from '@/components/RangeInput/range-input.model';
+import type { IRangeInput } from '@/components/RangeInput/range-input.model';
 import { computed, ref } from 'vue';
 
 const props = withDefaults(defineProps<IRangeInput>(), {
@@ -38,10 +42,11 @@ const props = withDefaults(defineProps<IRangeInput>(), {
   view: 'primary',
 });
 
-const modelValue = ref<IRangeInputValue>({
-  from: null,
-  to: null,
-});
+const fromValue = ref(props.modelValue.from);
+const toValue = ref(props.modelValue.to);
+
+const errorFrom = computed(() => props.error?.filter((item) => item.$property === 'from'));
+const errorTo = computed(() => props.error?.filter((item) => item.$property === 'to'));
 
 const resolvedLabels = computed(() => {
   switch (props.type) {
@@ -59,6 +64,12 @@ const resolvedLabels = computed(() => {
     }
   }
 });
+
+const updateValue = (val: string | number | null) => {
+  if (props.type === 'date' && typeof val === 'string') {
+    return Date.parse(val);
+  } else return val;
+};
 </script>
 
 <style scoped lang="scss">
@@ -75,7 +86,12 @@ const resolvedLabels = computed(() => {
 
   &__row {
     display: flex;
+    justify-content: space-between;
     gap: 10px;
+
+    & .ui-input {
+      width: 100%;
+    }
   }
 }
 </style>
