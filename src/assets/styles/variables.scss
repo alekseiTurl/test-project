@@ -7,6 +7,7 @@
   --color-light-grey: #F7F8F8;
   --color-red: #ff0000;
   --base-transition: 0.3s ease-in-out;
+  --color-green: #00a200;
 }
 
 :root {
@@ -15,4 +16,5 @@
   --color-text-white: var(--color-white);
   --color-background: var(--color-white);
   --color-error: var(--color-red);
+  --color-success: var(--color-green);
 }

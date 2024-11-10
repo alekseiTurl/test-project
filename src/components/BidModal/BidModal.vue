@@ -77,6 +77,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, helpers, minLength, minValue, maxValue, between } from '@vuelidate/validators';
 import type { IBidData } from '@/components/BidModal/bid-modal.model';
 import type { IUiSelectOptions } from '@/components/common/UiSelect/ui-select.model';
+import axios from 'axios';
 
 const formData = ref<IBidData>({
   name: null,
@@ -174,13 +175,15 @@ const onSubmit = () => {
   let isValid = !v.value.$invalid;
 
   if (isValid) {
-    console.log(formData.value);
-    emit('confirm');
+    axios
+      .post('https://jsonplaceholder.typicode.com/posts', formData.value)
+      .then(() => emit('confirm', { message: 'Ваша заявка принята', isCatch: false }))
+      .catch((error) => emit('confirm', { message: error.message, isCatch: true }));
   }
 };
 
 const emit = defineEmits<{
-  (e: 'confirm'): void;
+  (e: 'confirm', v: { message: string; isCatch: boolean }): void;
 }>();
 </script>
 
